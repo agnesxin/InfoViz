@@ -1,0 +1,193 @@
+{% extends "layout.html" %}
+{% block body %}
+<style>
+
+h1 {
+color: #2E2E2E;
+font-family: helvetica;
+text-align: center;
+font-size: 40px;
+
+
+}
+
+
+
+.bar {
+  fill: #66CCCC;
+}
+
+.bar:hover {
+  fill: brown;
+}
+
+.panel-text{
+font-size: 14px;
+font-family: helvetica;
+fill: white;
+text-anchor: middle;
+}
+
+.bar-label{
+fill: #2E2E2E;
+font-family: helvetica;
+font-size: 13px;
+
+}
+
+
+</style>
+<div id="chart"></div>
+
+<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+<script src="http://d3js.org/queue.v1.min.js"></script>
+
+<script>
+    data = []
+</script>
+
+<!-- Prepare the data -->
+{% for entry in entries %}
+<script>
+    data.push({'character':'{{entry.character}}',
+                'po0': '{{entry.po0}}',
+                'po1': '{{entry.po1}}',
+                'po2': '{{entry.po2}}',
+                'po3': '{{entry.po3}}',
+                'po4': '{{entry.po4}}',
+                'show': '{{entry.show}}',
+                'win_perc': '{{entry.win_perc}}'
+                });
+</script> 
+{% endfor %}
+
+
+
+<!-- Draw it -->
+<script>
+    //draw the canvas
+    var w=2000,h=2000;
+
+    var svg=d3.select("#chart") 
+            .append("svg") 
+            .attr("width",w)
+            .attr("height",h)
+     
+    var bars = svg.selectAll("g")
+            .data(data)
+            .enter()
+            .append("g")   
+            .on('mouseover', function(d,i){
+    
+                // popup window
+                var panel = d3.select(this)
+                        .append("g")
+                        .attr("class", "panel")
+                        .attr("class","hover");
+                
+                // paint the panel background
+                var rect = panel.append("rect")                        
+                        .attr("x", 660)
+                        .attr("y", i*15)
+                        .attr("width", "400")
+                        .attr("height", "400")
+                        .attr("rx",20)
+                        .attr("ry",20)
+                        .attr("fill", "red")
+                        .attr("opacity",0.4);
+                                                                                
+                // labels on the popup window
+                var panel_label = panel.append("text")
+                        .text(function(d) {return "Winning Percentage: "+Math.round(d.win_perc * 10000)/100 + "%"}) // round to 2 digit and format to percentage
+                        .attr("font-family", "helvetica")
+                        .attr("font-size", "14px")
+                        .attr("fill", "white")
+                        .attr("transform", "translate(710,"+(50 + i*15)+")")
+                        .attr("class","hover");
+
+                //prepare data for pie chart
+                var my_pie = [{"label":"Position 1", "value":d.po0}, 
+                            {"label":"Position 2", "value":d.po1}, 
+                            {"label":"Position 3", "value":d.po2},
+			                {"label":"Position 4", "value":d.po3}, 
+                            {"label":"Position 5", "value":d.po4}];
+    
+                // draw the pie chart
+                var r = 150,                            //radius
+                    color = d3.scale.ordinal()
+                        .range(["#7F3030", "#FFADAD", "#FF6160", "#7F5656", "#CC4D4D"]);     //buildin range of colors
+    
+                var vis = panel.append("g")
+                        .data([my_pie]) 
+                        .attr("transform", "translate(860," + (80 + i*15 + r) + ")") // position with certain distance from the panel_label
+                        .attr("class","hover");
+            
+                var arc = d3.svg.arc() 
+                        .outerRadius(r);
+ 
+                var pie = d3.layout.pie()
+                        .value(function(d) { return d.value; }); 
+ 
+                var arcs = vis.selectAll("g.slice") 
+                        .data(pie) 
+                        .enter()                         
+                        .append("svg:g") 
+                        .attr("class", "slice");
+    
+                arcs.append("svg:path")
+                    .attr("fill", function(d, i) { return color(i); } )
+                    .attr("d", arc);
+ 
+                arcs.append("svg:text")
+                    .attr("transform", function(d) {
+                        d.innerRadius = 0;
+                        d.outerRadius = r;
+                        return "translate(" + arc.centroid(d) + ")"; 
+                        })
+                    .text(function(d, i) { return my_pie[i].label; }) 
+                    .attr("class", "panel-text")    
+                
+                // highlight the selected hero
+                var highlight = d3.select(this)
+                                .append("svg:rect")
+                                .attr("x", 500)
+                                .attr("y",  (50+ i*15))
+                                .attr("width", 160)
+                                .attr("height", 13)
+                                .attr("class", "hover")
+                                .attr("opacity",0.4)
+                                .attr("fill","red");
+                    
+                // lshow the number of show times on the bar
+                var label_bar = d3.select(this)
+                                .append("svg:text")
+                                .text(function(d,i) {return d.show})
+                                .attr("font-family", "sans-serif")
+                                .attr("font-size", "10px")
+                                .attr("fill", "white")
+                                .attr("transform", "translate("+(505-d.show/10)+","+(60+i*15)+")")
+                                .attr("class","hover");
+                })
+
+         .on("mouseout", function(){d3.selectAll(".hover")
+                                    .remove();
+                })   
+    
+    // bars       
+    var box = bars.append("svg:rect")
+            .attr("x", function(d, i) {return 500 - d.show/10})
+            .attr("y", function(d, i) {return 50+i*15})
+            .attr("width", function(d, i) {return d.show/10})
+            .attr("height", 13)
+            .attr("class", "bar");
+    
+    // bars' label
+    var label = bars.append("text")
+            .text(function(d,i) {return (i+1)+"." + d.character})
+            .attr("class", "bar-label")
+            .attr("transform", function(d,i) {return "translate(510,"+(60+i*15)+")"});
+
+</script>
+
+
+{% endblock %}
