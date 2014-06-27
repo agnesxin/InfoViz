@@ -1,0 +1,38 @@
+h1 {
+color: #2E2E2E;
+font-family: helvetica;
+text-align: center;
+font-size: 40px;
+}
+
+h2 {
+color: #2E2E2E;
+font-family: helvetica;
+text-align: center;
+font-size: 20px;
+}
+
+
+.thick {
+font-family: helvetica;
+font-weight: bold;
+}
+
+.bar {
+  fill: #66CCCC;
+}
+
+
+.panel-text{
+font-size: 14px;
+font-family: helvetica;
+fill: white;
+text-anchor: middle;
+}
+
+.bar-label{
+fill: #2E2E2E;
+font-family: helvetica;
+font-size: 13px;
+}
+

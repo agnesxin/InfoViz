@@ -1,42 +1,8 @@
 {% extends "layout.html" %}
 {% block body %}
-<style>
 
-h1 {
-color: #2E2E2E;
-font-family: helvetica;
-text-align: center;
-font-size: 40px;
+<h2>Winning Ranking</h2>
 
-
-}
-
-
-
-.bar {
-  fill: #66CCCC;
-}
-
-.bar:hover {
-  fill: brown;
-}
-
-.panel-text{
-font-size: 14px;
-font-family: helvetica;
-fill: white;
-text-anchor: middle;
-}
-
-.bar-label{
-fill: #2E2E2E;
-font-family: helvetica;
-font-size: 13px;
-
-}
-
-
-</style>
 <div id="chart"></div>
 
 <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
@@ -66,7 +32,7 @@ font-size: 13px;
 <!-- Draw it -->
 <script>
     //draw the canvas
-    var w=2000,h=2000;
+    var w=1500,h=2000;
 
     var svg=d3.select("#chart") 
             .append("svg") 
@@ -78,7 +44,6 @@ font-size: 13px;
             .enter()
             .append("g")   
             .on('mouseover', function(d,i){
-    
                 // popup window
                 var panel = d3.select(this)
                         .append("g")
@@ -147,18 +112,8 @@ font-size: 13px;
                     .text(function(d, i) { return my_pie[i].label; }) 
                     .attr("class", "panel-text")    
                 
-                // highlight the selected hero
-                var highlight = d3.select(this)
-                                .append("svg:rect")
-                                .attr("x", 500)
-                                .attr("y",  (50+ i*15))
-                                .attr("width", 160)
-                                .attr("height", 13)
-                                .attr("class", "hover")
-                                .attr("opacity",0.4)
-                                .attr("fill","red");
-                    
-                // lshow the number of show times on the bar
+
+                // show the number of show times on the bar
                 var label_bar = d3.select(this)
                                 .append("svg:text")
                                 .text(function(d,i) {return d.show})
@@ -167,19 +122,35 @@ font-size: 13px;
                                 .attr("fill", "white")
                                 .attr("transform", "translate("+(505-d.show/10)+","+(60+i*15)+")")
                                 .attr("class","hover");
+                
+                d3.select(this).select(".barfill")
+                                .attr("fill","brown")
+                                
+                d3.select(this).select(".highlight")
+                                .attr("fill","red")
+                                .attr("opacity", 0.4)
+   
                 })
 
          .on("mouseout", function(){d3.selectAll(".hover")
                                     .remove();
+                                    d3.selectAll(".barfill")
+                                        .attr("fill", "#66CCCC");
+                                    d3.selectAll(".highlight")
+                                        .attr("opacity", 0);
                 })   
     
     // bars       
     var box = bars.append("svg:rect")
-            .attr("x", function(d, i) {return 500 - d.show/10})
+            .attr("x", 500)
             .attr("y", function(d, i) {return 50+i*15})
-            .attr("width", function(d, i) {return d.show/10})
+            .attr("width", 1)
             .attr("height", 13)
-            .attr("class", "bar");
+            .attr("fill", "#66CCCC")
+            .attr("class", "barfill")
+            .transition()
+            .attr("x", function(d, i) {return 500 - d.show/10})
+            .attr("width", function(d, i) {return d.show/10});
     
     // bars' label
     var label = bars.append("text")
@@ -187,6 +158,29 @@ font-size: 13px;
             .attr("class", "bar-label")
             .attr("transform", function(d,i) {return "translate(510,"+(60+i*15)+")"});
 
+
+    // highlight the selected hero
+    var highlight = bars.append("svg:rect")
+                                .attr("x", 500)
+                                .attr("y",  function(d,i){return (50+ i*15)})
+                                .attr("width", 160)
+                                .attr("height", 13)
+                                .attr("opacity",0)
+                                .attr("class", "highlight");
+    
+    // add the title
+    svg.append("text")
+        .text("Show Times")
+        .attr("class","thick")
+        .attr("transform", "translate(330,40)");
+    
+    svg.append("text")
+        .text("Characters")
+        .attr("class","thick")
+        .attr("transform", "translate(520,40)");
+                          
+                          
+                                
 </script>
 
 
