@@ -1,5 +1,6 @@
 InfoViz
 =======
 
-  python input_db.py
-  python run.py
+* python create_db.py
+  
+* python run.py
