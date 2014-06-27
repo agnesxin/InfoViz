@@ -1,12 +1,11 @@
 {% extends "layout.html" %}
 {% block body %}
 
-<h2>Winning Ranking</h2>
+<p>Winning Ranking<p>
 
 <div id="chart"></div>
 
 <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
-<script src="http://d3js.org/queue.v1.min.js"></script>
 
 <script>
     data = []
@@ -161,25 +160,31 @@
 
     // highlight the selected hero
     var highlight = bars.append("svg:rect")
-                                .attr("x", 500)
-                                .attr("y",  function(d,i){return (50+ i*15)})
-                                .attr("width", 160)
-                                .attr("height", 13)
-                                .attr("opacity",0)
-                                .attr("class", "highlight");
+                .attr("x", 500)
+                .attr("y",  function(d,i){return (50+ i*15)})
+                .attr("width", 160)
+                .attr("height", 13)
+                .attr("opacity",0)
+                .attr("class", "highlight");
     
     // add the title
     svg.append("text")
         .text("Show Times")
         .attr("class","thick")
-        .attr("transform", "translate(330,40)");
+        .attr("transform", "translate(250,40)");
     
     svg.append("text")
         .text("Characters")
         .attr("class","thick")
         .attr("transform", "translate(520,40)");
                           
-                          
+    // add the line to separate title and bars
+    var highlight = bars.append("svg:line")
+                .attr("x1", 80)
+                .attr("y1", 45)
+                .attr("x2", 660)
+                .attr("y2", 45)
+                .style("stroke", "black");                   
                                 
 </script>
 

@@ -3,8 +3,6 @@
 # import sqlite3 
 from flask import Flask,render_template
 from flask.ext.sqlalchemy import SQLAlchemy
-from models import *
-
 
 app = Flask(__name__)
 
@@ -15,6 +13,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db/game_record.db'
 db = SQLAlchemy(app)
 
 
+from models import *
 
 
 @app.route('/')
@@ -22,7 +21,11 @@ def show_entries():
     records = db.session.query(CompetitionRecord).all()
     
     # store the character information in a dictionary
+    
     # char_info[char] = [po0: xx, po1: xx, po2: xx, po3: xx, po4: xx, show: xx, win: xx]
+    # po0: the win times of each character at the position 1 
+    # show: total show times of each character
+    # win: total win times of each character
     
     char_info = {}
     for r in records:   
@@ -40,6 +43,7 @@ def show_entries():
             char_info[r.character][r.position] += r.win
     
     # store in a list of dictionary for pushing
+    # win_perc: total winning percentage of each character
     entries = [dict(character=char, po0=char_info[char][0],po1=char_info[char][1], po2=char_info[char][2], po3=char_info[char][3], po4=char_info[char][4], show=char_info[char][5], win_perc=float(char_info[char][6])/float(char_info[char][5])) for char in char_info]
     
     # sort it in the order of winning percentage

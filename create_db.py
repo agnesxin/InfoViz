@@ -4,9 +4,14 @@ from models import CompetitionRecord
 # create the database and the db tables
 db.create_all()
 
+
+def get_lines(f):
+    for line in f:
+        yield line
+
 #insert data
 f = open('game_data.txt', 'rU')    
-for line in f:
+for line in get_lines(f):
     tmp_ls = line.rstrip().split(',')
     # when team1 win
     if tmp_ls[10] == '1':
@@ -22,8 +27,8 @@ for line in f:
             db.session.add(CompetitionRecord(tmp_ls[i], str(i-5),1))
 
 
-# commit the changes
-db.session.commit()
+    # commit the changes
+    db.session.commit()
 
 
 

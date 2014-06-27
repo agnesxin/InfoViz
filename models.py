@@ -2,6 +2,7 @@ from run import db
 
 class CompetitionRecord(db.Model):
 
+    # create record table to store characters' position, and win or not in every combat 
     __tablename__ = "record"
 
     id = db.Column(db.Integer, primary_key=True)
@@ -13,8 +14,5 @@ class CompetitionRecord(db.Model):
         self.character = character
         self.position = position
         self.win = win
-#  
-#     # print to test
-#     def __repr__(self):
-#         return '<{}-{}-{}'.format(self.character, self.position, self.win)
 
+  
